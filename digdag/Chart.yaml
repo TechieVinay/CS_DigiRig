@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 0.10.0
+description: A Helm chart for DigitalRig Digdag installation
+name: digdag
+type: application
+version: 0.1.2

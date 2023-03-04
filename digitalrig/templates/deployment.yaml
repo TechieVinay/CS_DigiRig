@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "digitalrig.fullname" . }}
+  labels:
+    {{- include "digitalrig.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "digitalrig.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "digitalrig.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "0"
+            - name: CLIENT_URL
+              value: {{ .Values.rig.client_url }}
+            - name: MONGO_URL
+              value: {{ .Values.rig.mongo_url }}
+            - name: MONGO_DB_NAME
+              value: {{ .Values.rig.mongo_db_name }}
+            - name: MONGO_USER
+              value: {{ .Values.rig.mongo_user }}
+            - name: MONGO_PASSWORD
+              value: {{ .Values.rig.mongo_pwd }}
+            - name: SERVER_IP
+              value: {{ .Values.rig.server_ip }}
+            - name: VAULT_URL
+              value: {{ .Values.rig.vault_url }}
+            - name: VAULT_TOKEN
+              value: {{ .Values.rig.vault_token }}
+            - name: VAULT_SECRET_ENGINE
+              value: {{ .Values.rig.vault_secret_engine }}
+            - name: WORKFLOW_ENGINE_URL
+              value: {{ .Values.rig.workflow_url }}
+            - name: POSTGREST
+              value: {{ .Values.rig.postgrest_url }}
+            - name: REACT_APP_POSTGREST
+              value: {{ .Values.rig.react_postgrest_url }}
+            - name: KEYCLOAK_AUTH_SERVER_URL
+              value: {{ .Values.rig.kc_auth_url }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.rig.kc_realm }}
+            - name: KEYCLOAK_SSL_REQUIRED
+              value: {{ .Values.rig.kc_ssl_required }}
+            - name: KEYCLOAK_RESOURCE
+              value: {{ .Values.rig.kc_resource }}
+            - name: KEYCLOAK_PUBLIC_CLIENT
+              value: {{ .Values.rig.kc_public_client | quote }}
+            - name: TEMPLATEREPO
+              value: {{ .Values.rig.template_repo }}
+            - name: TEMPLATEREPONAME
+              value: {{ .Values.rig.template_repo_name }}
+            - name: TEMPLATECREDNAME
+              value: {{ .Values.rig.template_cred_name }}
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: VAULT
+              value: {{ .Values.rig.vault }}
+            - name: AKV_GRANT_TYPE
+              value: {{ .Values.rig.akv_grant_type }}
+            - name: AKV_CLIENT_ID
+              value: {{ .Values.rig.akv_client_id }}
+            - name: AKV_CLIENT_SECRET
+              value: {{ .Values.rig.akv_client_secret }}
+            - name: AKV_SCOPE
+              value: {{ .Values.rig.akv_scope }}
+            - name: AKV_TOKEN_URL
+              value: {{ .Values.rig.akv_token_url }}
+            - name: AKV_VAULT_URL
+              value: {{ .Values.rig.akv_vault_url }}
+            - name: AKV_API_VERSION
+              value: {{ .Values.rig.akv_api_version | quote  }}
+            - name: KEYCLOAK_USERNAME
+              value: {{ .Values.rig.keycloak_username }}
+            - name: KEYCLOAK_PASSWORD
+              value: {{ .Values.rig.keycloak_password }}
+            - name: USER_LOGIN_TYPE
+              value: {{ .Values.rig.user_login_type }}
+            - name: RABBITMQ_URI
+              value: {{ .Values.rig.rabbitmq_uri }}
+            - name: WORKFLOW_ENGINE
+              value: {{ .Values.rig.workflowEngine }}
+            - name: loginType
+              value: {{ .Values.rig.loginType }} 
+            - name: PYTHON_TYPE
+              value: {{ .Values.rig.pythonType }}
+            - name: publicAssessmentQuestionarrie
+              value: {{ .Values.rig.publicAssessmentQuestionarrie }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.rig.awsAccessKeyId }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.rig.awsSecretAccessKey }}
+            - name: ALJENKINSURL
+              value: {{ .Values.rig.jenkinsURL }}
+            - name: JENKINSFOLDER
+              value: {{ .Values.rig.jenkinsFolder }}
+            - name: JENKINSUSERNAME
+              value: {{ .Values.rig.jenkinsUserName }}
+            - name: JENKINSPSWD
+              value: {{ .Values.rig.jenkinsPassword }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

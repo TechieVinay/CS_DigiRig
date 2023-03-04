@@ -1,0 +1,118 @@
+# Default values for digitalrig.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: digitalrigcluster.azurecr.io/digitalrig
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 'latest'
+
+imagePullSecrets:
+  - name: rig-registry
+
+rig:
+  client_url: ''
+  mongo_url: ''
+  mongo_db_name: ''
+  mongo_user: ''
+  mongo_pwd: ''
+  server_ip: ''
+  vault_url: ''
+  vault_token: ''
+  vault_secret_engine: ''
+  workflow_url: ''
+  postgrest_url: ''
+  react_postgrest_url: ''
+  kc_auth_url: ''
+  kc_realm: ''
+  kc_ssl_required: ''
+  kc_resource: ''
+  kc_public_client: ''
+  template_repo: ''
+  template_repo_name: ''
+  template_cred_name: ''
+  vault: ''
+  akv_grant_type: ''
+  akv_client_id: ''
+  akv_client_secret: ''
+  akv_scope: ''
+  akv_token_url: ''
+  akv_vault_url: ''
+  akv_api_version: ''
+  keycloak_username: ''
+  keycloak_password: ''
+  user_login_type: ''
+  rabbitmq_uri: ''
+  workflowEngine: ''
+  loginType: ''
+  awsAccessKeyId: ''
+  awsSecretAccessKey: ''
+  jenkinsURL: ''
+  jenkinsFolder: ''
+  jenkinsUserName: ''
+  jenkinsPassword: ''
+
+
+nameOverride: ''
+fullnameOverride: ''
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  apiVersion: networking.k8s.io/v1beta1
+  pathType: ImplementationSpecific
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          backend:
+            serviceName:
+            servicePort:
+  tls:
+    - secretName:
+      hosts:
+        - chart-example.local
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
